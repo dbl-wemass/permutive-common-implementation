@@ -2,6 +2,8 @@
 
 El objetivo de este repositorio es dar informacion de uso y transparencia de ejecucion a los diferentes equipos de implementacion acerca de la implementacion comun de permutive.
 
+El contenido del archivo __URLWemassService__ se encuentra en /src/index.js
+
 ## Metodos #
 Todos los metodos wemass están pensados para ejecutarse tras un buffer (__wmass.bff), el cual es inicializado manualmente, por lo que la posibilidad de errores será minimizada.
 
