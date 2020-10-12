@@ -72,8 +72,12 @@
         }
       }
       permutiveScript.setAttribute("async", "async");
-      permutiveScript.setAttribute("src", "https://cdn.permutive.com/><PROJECT_ID>-web.js");
+      permutiveScript.setAttribute("src", `https://cdn.permutive.com/${projectId}-web.js`);
     }
+  
+  /*Here will be all the custom modifications of the publisher*/
+
+
   //initializing __wmass object
   window.top.__wmass = window.top.__wmass || {};
   window.top.__wmass.bff = window.top.__wmass.bff || [];
@@ -99,19 +103,19 @@
       window.top.__wmass.initDmp = () => {};
     };
   }
-  if (preciseTypeOf(window.top.__wmass.bff) === "array") {
+  if (preciseTypeOf(window.top.__wmass.bff) === "array" && window.top.__wmass.bff.length > 0) {
     //executing the buffered functions
-    if (window.top.__wmass.bff.length > 0)
-      for (let bufferedFunction of window.top.__wmass.bff) {
-        if (preciseTypeOf(bufferedFunction) === "function")
-          bufferedFunction();
-      }
+    for (let bufferedFunction of window.top.__wmass.bff) {
+      if (preciseTypeOf(bufferedFunction) === "function")
+        bufferedFunction();
+    }
   }
   if (preciseTypeOf(window.top.__wmass.bff) !== "object") {
     //converting the buffer to a object with a push funcion that executes the parameter inmediatly.
     window.top.__wmass.bff = {
       push: function (instruction) {
-        instruction()
+        if(preciseTypeOf(instruction) === "function")
+          instruction();
       }
     };
   }
