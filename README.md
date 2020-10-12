@@ -7,7 +7,7 @@ Todos los metodos wemass están pensados para ejecutarse tras un buffer (__wmass
 
 Existe una excepcion a esto, el metodo *getSegments*, el cual será inicializado manualmente en una version basica ya que los segmentos son almacenados en localStorage, y potencialmente podrian ser utilizados antes de que el motor del DMP sea inicializado.
 ### Inicializacion ##
-Este paso ha de ejecutarse antes de poder usar ningun otro metodo y debe de ser ejecutado en el objeto window superior de la pagina.
+Este paso ha de ejecutarse antes de poder usar ningun otro metodo y debe de ser ejecutado en el objeto window superior de la pagina. Cuanto mas arriba en el propio codigo fuente de la página, mejor.
 ```html
 <script async src="__URLWemassService__"></script>
 <script>
