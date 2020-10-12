@@ -1,0 +1,8 @@
+{
+  "name": "permutive-common-implementation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:dbl-wemass/permutive-common-implementation.git",
+  "author": "David Berrocal <david.berrocal@wemass.com>",
+  "license": "GNU2"
+}
