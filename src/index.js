@@ -1,7 +1,63 @@
 /*content of wemass remote js(not minified)*/
 (function () {
-  //initializing DMP
-  let preciseTypeOf = (obj, options) => {
+  const
+    windowTop=window.top,
+    permutiveProjectId = "<PROJECT_ID>",
+    permutiveProjectId = "<PUBLIC_API_KEY>",
+    permutiveExtraConfig = {};
+  let
+    logLog=()=>{},
+    checkPurposes = () => {
+      if (windowTop["__cmp"] || windowTop["__tcfapi"]) {
+        if (!windowTop.__wmass["consentData"])
+          windowTop.__wmass["consentData"] = {};
+          /**
+           * purpose 1 permite llamar al Script del CMP
+           */
+        let 
+          minPurposesV1 =[],
+          minPurposesV2=["1","3"], 
+          consento=windowTop.__wmass["consentData"];
+        if (windowTop["__tcfapi"]) {
+          tcfVersion = 2;
+          let setTCFData = (tcData, success) => {
+            if (success) {
+              let {
+                eventStatus,
+                tcString,
+                listenerId,
+                gdprApplies
+              }=tcData;
+              logLog(`TCF v2 eventListener executed, eventStatus: ${eventStatus}`);
+              logLog(`TCF v2 tcdataString disponible: ${tcString}`);
+              if ( preciseTypeOf(tcString) === "string" && tcString.length > 0) {
+                consento["getTCData"] = tcData;
+                windowTop["__tcfapi"]('removeEventListener', 2, (success) => {
+                  if (success) {
+                    logLog("TCF v2 event removed");
+                  }
+                }, listenerId);
+                init(true);
+              }
+            } else logLog({tcData,success});
+          };
+          windowTop["__tcfapi"]('addEventListener', 2, setTCFData);
+        } else if (windowTop["__cmp"]) {
+          tcfVersion = 1;
+          if (!consento["getConsentData"])
+            windowTop["__cmp"]("getConsentData", null, consentData => {
+              consento["getConsentData"] = consentData;
+              init(true);
+            });
+          if (!consento["getVendorConsents"])
+            windowTop["__cmp"]("getVendorConsents", null, consentData => {
+              consento["getVendorConsents"] = consentData;
+              init(true);
+            });
+        }
+      }
+    },
+    preciseTypeOf = (obj, options) => {
       var type, stamp = Object.prototype.toString.call(obj);
 
       options = options || {};
@@ -74,7 +130,7 @@
       permutiveScript.setAttribute("async", "async");
       permutiveScript.setAttribute("src", `https://cdn.permutive.com/${projectId}-web.js`);
     }
-  
+
   /*Here will be all the custom modifications of the publisher*/
 
 
@@ -84,12 +140,12 @@
 
   if (!window.top.__wmass.hasOwnProperty("initDmp")) {
     window.top.__wmass.initDmp = (dmpData = {}) => {
-      if(preciseTypeOf(dmpData)==="object"){
+      if (preciseTypeOf(dmpData) === "object") {
         let {
           permutive: {
-            projectId = false,
-            publicKey = false,
-            config = {}
+            projectId = permutiveProjectId,
+            publicKey = permutiveProjectId,
+            config = permutiveExtraConfig
           } = {}
         } = dmpData;
         if (preciseTypeOf(projectId) === "string" && projectId.length > 0 && preciseTypeOf(publicKey) === "string" && publicKey.length > 0) {
@@ -109,12 +165,13 @@
       if (preciseTypeOf(bufferedFunction) === "function")
         bufferedFunction();
     }
+    __wmass.initDmp();
   }
   if (preciseTypeOf(window.top.__wmass.bff) !== "object") {
     //converting the buffer to a object with a push funcion that executes the parameter inmediatly.
     window.top.__wmass.bff = {
       push: function (instruction) {
-        if(preciseTypeOf(instruction) === "function")
+        if (preciseTypeOf(instruction) === "function")
           instruction();
       }
     };

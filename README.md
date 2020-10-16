@@ -13,26 +13,17 @@ Este paso ha de ejecutarse antes de poder usar ningun otro metodo y debe de ser 
 ```html
 <script async src="__URLWemassService__"></script>
 <script>
-  window.__wmass = window.__wmass || {};
-  window.__wmass.bff = window.__wmass.bff || [];
-  window.__wmass.getSegments = window.__wmass.getSegments || function(){ 
-    let psegs=[];
-    try  {
-        pSegs = JSON.parse(window.localStorage._papns || '[]').slice(0, 250).map(String);
-    } catch (e) {
-        pSegs = []
-    }
-    return {segments:pSegs};
-  };
-  __wmass.bff.push(function () {
-      let dmpData={
-          permutive:{
-              projectId: "<PROJECT_ID>",
-              publicKey: "<PUBLIC_API_KEY>"
-          }
-      };
-    __wmass.initDmp(dmpData);
-  })
+    window.__wmass = window.__wmass || {};
+    window.__wmass.bff = window.__wmass.bff || [];
+    window.__wmass.getSegments = window.__wmass.getSegments || function(){ 
+        let psegs=[];
+        try  {
+            pSegs = JSON.parse(window.localStorage._papns || '[]').slice(0, 250).map(String);
+        } catch (e) {
+            pSegs = []
+        }
+        return {segments:pSegs};
+    };
 </script>
 ```
 ## DMP Methods
