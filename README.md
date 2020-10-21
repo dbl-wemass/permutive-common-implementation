@@ -28,7 +28,9 @@ Este paso ha de ejecutarse antes de poder usar ningun otro metodo y debe de ser 
 ```
 ## DMP Methods
 ### Sending page Data ##
-Atributos de ejemplo, la version final de los atributos se recibirán desde wemass
+Estos son los atributos que se han de pasar al dmp, en caso de que alguno de ellos no se pueda rellenar se ha de pasar un string vacio.
+En caso de que se quiera añadir un nuevo parametro se ha de avisar a wemass por adelantado.
+Los nombres de las propiedades son case-sensitive.
 Este codigo ha de ser ejecutado en el objeto window superior de la pagina.
 ```javascript
 <script>
