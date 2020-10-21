@@ -28,7 +28,7 @@ Este paso ha de ejecutarse antes de poder usar ningun otro metodo y debe de ser 
 ```
 ## DMP Methods
 ### Sending page Data ##
-Estos son los atributos que se han de pasar al dmp, en caso de que alguno de ellos no se pueda rellenar se ha de pasar un string vacio.
+Estos son los atributos que se han de pasar al DMP, en caso de que alguno de ellos no se pueda rellenar se ha de pasar un string vacio.
 En caso de que se quiera añadir un nuevo parametro se ha de avisar a wemass por adelantado.
 Los nombres de las propiedades son case-sensitive.
 Este codigo ha de ser ejecutado en el objeto window superior de la pagina.
@@ -73,7 +73,7 @@ let segmentList= __wmass.getSegments();
 getSements devolverá un objeto con 1 o varias atributos  con diferentes grupos de segmentos. Cada propiedad contendrá un array de strings con la informacion.
 Por ahora solamente devolverá
 ```javascript
-{permutive:["lista","de","segmentos"]}
+{segments:["lista","de","segmentos"]}
 ```
 ### Passing Segment list to Appnexus ##
 En appnexus los segmentos se han de pasar dentro del parametro keywords como se puede ver en el ejemplo.
