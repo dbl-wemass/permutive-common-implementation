@@ -2,6 +2,7 @@
 - [Implementación común de permutive](#implementación-común-de-permutive)
   - [Consentimiento](#consentimiento)
   - [Métodos](#métodos)
+  - [:warning: Esquemas de validación](#️-esquemas-de-validación)
 - [Inicialización](#inicialización)
 - [Enviando atributos de la página al DMP](#enviando-atributos-de-la-página-al-dmp)
 - [Enviando identidades al DMP](#enviando-identidades-al-dmp)
@@ -47,18 +48,18 @@ TCF v1
 
 El contenido del archivo sin personalizar de *\_\_URLWemassService__* se encuentra en */src/index.js*.
 
->:warning: Esquemas de validación
->
->El DMP usa un esquema de validación para conjuntos de propiedad-valor y eventos.
->
->Si se incluye una propiedad o nombre de evento no declarados (estos valores son *case-sensitive*), o un valor no apropiado para el esquema, esto será rechazado con un error 400.
->
->Para añadir o modificar estos valores, por favor contacta con wemass.
-
 ## Métodos 
 Todos los métodos wemass están pensados para ejecutarse tras un buffer (*__wmass.bff*), el cual es inicializado manualmente, por lo que la posibilidad de errores será minimizada.
 
 Existe una excepción a esto, el método *getSegments*, el cual será inicializado manualmente en una versión básica ya que los segmentos son almacenados en localStorage, y potencialmente podría ser utilizados antes de que el motor del DMP sea inicializado.
+
+## :warning: Esquemas de validación
+
+El DMP usa un esquema de validación para conjuntos de propiedad-valor y eventos.
+
+Si se incluye una propiedad o nombre de evento no declarados (estos valores son *case-sensitive*), o un valor no apropiado para el esquema, esto será rechazado con un error 400.
+
+Para añadir o modificar estos valores, por favor contacta con wemass.
 
 # Inicialización
 
@@ -80,11 +81,11 @@ Este paso ha de ejecutarse antes de poder usar ningún otro método y debe de se
 </script>
 <script async src="__URLWemassService__"></script>
 ```
->:warning: Wemass hará llegar el codigo correcto. No usar este codigo en produccion.
+>:warning: Wemass hará llegar el código correcto. No usar este código en producción.
 
 # Enviando atributos de la página al DMP
 Estos son los atributos que se han de pasar al DMP, en caso de que alguno de ellos no se pueda rellenar se ha de pasar un string vacío.
-Este codigo ha de lanzarse lo antes posible en la ejecucion, idealmente justo despues de la inicializacion.
+Este código ha de lanzarse lo antes posible en la ejecución, idealmente justo después de la inicialización.
 
 Los nombres de las propiedades son *case-sensitive*.
 
@@ -95,7 +96,7 @@ Este código ha de ser ejecutado en el objeto window superior de la página.
 ```html
 <script>
 __wmass.bff.push(function () {
-    /*Si se dispone de algun tipo de identificador del usuario cuando se carga la página se deberia ejecutar este código Ver la seccion de Sending identities to DMP para mas informacion.
+    /*Si se dispone de algún tipo de identificador del usuario cuando se carga la página se debería ejecutar este código Ver la sección de #enviando-atributos-de-la-página-al-dmp para más información.
     if (USER_ID_AVAILABLE) { 
         __wmass.dmp.identify([
             {
@@ -197,7 +198,7 @@ __wmass.bff.push(function () {
 ```javascript 
 let segmentList= __wmass.getSegments();
 ```
-*getSements* devolverá un objeto con 1 o varias atributos con diferentes grupos de segmentos. Cada propiedad contendrá un array de strings con la información.
+*getSements* devolverá un objeto con 1 o varios atributos con diferentes grupos de segmentos. Cada propiedad contendrá un array de strings con la información.
 
 Por ahora solamente devolverá
 ```javascript
@@ -272,9 +273,9 @@ let
 pbjs.addAdUnits(adUnits);
 ```
 # Otras posibilidades
-Se incluyen aqui otras posibilidades que permite el DMP, para mas detalles sobre implementacion y uso contacte con wemass.
+Se incluyen aquí otras posibilidades que permite el DMP, para más detalles sobre implementación y uso contacte con wemass.
 ## Obteniendo status de segmentos individuales
-Se puede preguntar por el estado de inclusion de un segmento predefinido para realizar alguna accion en la página
+Se puede preguntar por el estado de inclusión de un segmento predefinido para realizar alguna acción en la página
 ```javascript
 __wmass.bff.push(function () {
     __wmass.dmp.segment(idEvento, function(result) {
@@ -291,10 +292,10 @@ __wmass.bff.push(function () {
 });
 ```
 Callback recibirá un objeto con los segmentos a los que pertenece el usuario
->:warning: Debido a la inmediatez de la ejecucion de prebid es mejor, para enviar los segmentos a los SSP usar la funcion estatica *__wmass.getSegments()*
+>:warning: Debido a la inmediatez de la ejecución de prebid es mejor, para enviar los segmentos a los SSP usar la funcion estatica *__wmass.getSegments()*
 
 ## Interacciones o eventos y disparadores
-Es posible hacer seguimiento de acciones que realice el usuario en tiempo real, por ejemplo rellenando una encuesta, usando la funcion *track*.
+Es posible hacer seguimiento de acciones que realice el usuario en tiempo real, por ejemplo, rellenando una encuesta, usando la funcion *track*.
 ```javascript
 __wmass.bff.push(function () {
     __wmass.dmp.track('CustomEventName', {dataItem:true}, opciones);
@@ -303,7 +304,7 @@ __wmass.bff.push(function () {
 
 ### Disparadores
 
-Es posible asociar *callbacks* a interacciones cuando un usuario es incluido en un segmento a traves de un Evento.
+Es posible asociar *callbacks* a interacciones cuando un usuario es incluido en un segmento a través de un Evento.
 ```javascript
 __wmass.bff.push(function () {
     __wmass.dmp.trigger(idEvento, "result", function(obj){
@@ -316,8 +317,8 @@ __wmass.bff.push(function () {
 >:warning: ver esquemas de validación
 
 # Changelog
-29/10/2020 : Incluido indice. Añadidas otras opciones.
+29/10/2020 : Incluido índice. Añadidas otras opciones.
 
 28/10/2020 : Añadido setup para scroll infinito. Incluido ejemplo de SmartAdserver. Modificaciones por claridad.
 
-13/10/2020 : release of PoF version
+13/10/2020 : Prueba de concepto
