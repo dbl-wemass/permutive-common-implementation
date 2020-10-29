@@ -85,11 +85,10 @@ Este paso ha de ejecutarse antes de poder usar ningún otro método y debe de se
 
 # Enviando atributos de la página al DMP
 Estos son los atributos que se han de pasar al DMP, en caso de que alguno de ellos no se pueda rellenar se ha de pasar un string vacío.
-Este código ha de lanzarse lo antes posible en la ejecución, idealmente justo después de la inicialización.
-
-Los nombres de las propiedades son *case-sensitive*.
-
-Este código ha de ser ejecutado en el objeto window superior de la página. 
+Este código ha de lanzarse lo antes posible en la ejecución, idealmente justo después de la inicialización. Hay que tener en cuenta los siguientes puntos:
+* Los nombres de las propiedades son *case-sensitive*.
+* Este código ha de ser ejecutado en el objeto window superior de la página. 
+* Los datos de tipo fecha esperan una fecha de tipo ISO (yyyy-mm-ddThh:mm:ss.milisZ)
 
 >:warning: ver esquemas de validación
 
