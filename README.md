@@ -15,12 +15,11 @@
   - [Obteniendo status de segmentos individuales](#obteniendo-status-de-segmentos-individuales)
   - [Listar todos los segmentos con callback](#listar-todos-los-segmentos-con-callback)
   - [Interacciones o eventos y disparadores](#interacciones-o-eventos-y-disparadores)
-    - [Disparadores](#disparadores)
 - [Changelog](#changelog)
 
 # Implementación común de permutive #
 
-El objetivo de este repositorio es englobar, dar información de uso y transparencia de ejecución a los diferentes equipos de implementación acerca de la implementación común de permutive.
+El objetivo de este repositorio es englobar, dar información de uso y transparencia de ejecución a los diferentes equipos de implementación acerca de la implementación común de permutive en entorno web **no AMP**.
 >:warning: Para estar al tanto de las ultimas actualizaciones considera suscribirte al repositorio
 
 ## Consentimiento
@@ -90,7 +89,7 @@ Este código ha de lanzarse lo antes posible en la ejecución, idealmente justo 
 * Este código ha de ser ejecutado en el objeto window superior de la página. 
 * Los datos de tipo fecha esperan una fecha de tipo ISO (yyyy-mm-ddThh:mm:ss.milisZ)
 
->:warning: ver esquemas de validación
+>:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
 
 ```html
 <script>
@@ -146,7 +145,7 @@ Se debe tener en cuenta los siguientes puntos:
 * Una vez que un identificador está mapeado a un usuario, esta relación no es reversible (este problema se vería por ejemplo si dos usuarios tuvieran como id el valor _undefined_), por lo que se ha de asegurar que **solo se ha de llamar a este método cuando se dispone de un id**.
 * No se ha de usar valores que permitan identificación personal del usuario (PII) como dirección, Email sin encriptar, id público de perfil, etc...
 
->:warning: ver esquemas de validación
+>:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
 
 ```javascript
 __wmass.bff.push(function () {
@@ -166,7 +165,7 @@ Este paso es especialmente necesario en Safari debido a las restricciones de ITP
 # Scroll infinito
 En aquellas páginas con scroll infinito se ha de llamar a la función *addon* sin pasar los atributos de usuario (a no ser que estos hayan cambiado).
 
->:warning: ver esquemas de validación
+>:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
 
 ```javascript
 __wmass.bff.push(function () {
@@ -301,7 +300,7 @@ __wmass.bff.push(function () {
 });
 ```
 
-### Disparadores
+### Disparadores <!-- omit in toc -->
 
 Es posible asociar *callbacks* a interacciones cuando un usuario es incluido en un segmento a través de un Evento.
 ```javascript
@@ -313,7 +312,7 @@ __wmass.bff.push(function () {
 });
 ``` 
 
->:warning: ver esquemas de validación
+>:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
 
 # Changelog
 29/10/2020 : Incluido índice. Añadidas otras opciones.
