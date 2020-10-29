@@ -2,7 +2,7 @@
 - [Implementación común de permutive](#implementación-común-de-permutive)
   - [Consentimiento](#consentimiento)
   - [Métodos](#métodos)
-  - [:warning: Esquemas de validación](#️-esquemas-de-validación)
+  - [Esquemas de validación](#esquemas-de-validación)
 - [Inicialización](#inicialización)
 - [Enviando atributos de la página al DMP](#enviando-atributos-de-la-página-al-dmp)
 - [Enviando identidades al DMP](#enviando-identidades-al-dmp)
@@ -52,7 +52,7 @@ Todos los métodos wemass están pensados para ejecutarse tras un buffer (*__wma
 
 Existe una excepción a esto, el método *getSegments*, el cual será inicializado manualmente en una versión básica ya que los segmentos son almacenados en localStorage, y potencialmente podría ser utilizados antes de que el motor del DMP sea inicializado.
 
-## :warning: Esquemas de validación
+## Esquemas de validación
 
 El DMP usa un esquema de validación para conjuntos de propiedad-valor y eventos.
 
@@ -89,7 +89,7 @@ Este código ha de lanzarse lo antes posible en la ejecución, idealmente justo 
 * Este código ha de ser ejecutado en el objeto window superior de la página. 
 * Los datos de tipo fecha esperan una fecha de tipo ISO (yyyy-mm-ddThh:mm:ss.milisZ)
 
->:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
+>:warning: Importante: aqui aplican los [Esquemas de validación](#esquemas-de-validación)
 
 ```html
 <script>
@@ -145,7 +145,7 @@ Se debe tener en cuenta los siguientes puntos:
 * Una vez que un identificador está mapeado a un usuario, esta relación no es reversible (este problema se vería por ejemplo si dos usuarios tuvieran como id el valor _undefined_), por lo que se ha de asegurar que **solo se ha de llamar a este método cuando se dispone de un id**.
 * No se ha de usar valores que permitan identificación personal del usuario (PII) como dirección, Email sin encriptar, id público de perfil, etc...
 
->:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
+>:warning: Importante: aqui aplican los [Esquemas de validación](#esquemas-de-validación)
 
 ```javascript
 __wmass.bff.push(function () {
@@ -165,7 +165,7 @@ Este paso es especialmente necesario en Safari debido a las restricciones de ITP
 # Scroll infinito
 En aquellas páginas con scroll infinito se ha de llamar a la función *addon* sin pasar los atributos de usuario (a no ser que estos hayan cambiado).
 
->:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
+>:warning: Importante: aqui aplican los [Esquemas de validación](#esquemas-de-validación)
 
 ```javascript
 __wmass.bff.push(function () {
@@ -312,7 +312,7 @@ __wmass.bff.push(function () {
 });
 ``` 
 
->:warning: Importante: aqui aplican los [Esquemas de validación](#️-esquemas-de-validación)
+>:warning: Importante: aqui aplican los [Esquemas de validación](#esquemas-de-validación)
 
 # Changelog
 29/10/2020 : Incluido índice. Añadidas otras opciones.
