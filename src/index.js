@@ -459,6 +459,30 @@
   }
 
   logLog("Loading Wemass DMP Tag __%tagName%__");
+  let getWmssMethod = (pMethod) => {
+    if (pMethod === "addon") {
+      return function (tipo, data = {}, ...resto) {
+        if (!data.page) data.page = {};
+        let itemType = data.page.type;
+        if (itemType === "noticia" && !data.page.classifications_watson)
+          data.page.classifications_watson = {
+            categories: "$alchemy_taxonomy",
+            keywords: "$alchemy_keywords",
+            sentiment: "$alchemy_document_sentiment",
+          };
+        logInfo(`Llamando a __wmass.dmp.addon con argumentos`, [
+          tipo,
+          data,
+          ...resto,
+        ]);
+        windowTop.permutive[pMethod].apply(null, [tipo, data, ...resto]);
+      };
+    }
+    return function () {
+      logInfo(`Llamando a __wmass.dmp.${pMethod} con argumentos`, arguments);
+      windowTop.permutive[pMethod].apply(null, arguments);
+    };
+  };
   //=require wemass-modules/modules/helpers/preciseTypeOf.js
   let createElemento = (nodeName, attributes = {}) => {
     let esString = preciseTypeOf(nodeName) === "string",
@@ -605,8 +629,7 @@
             !windowTop["__wmass"].dmp[pMethod] &&
             windowTop.permutive[pMethod]
           ) {
-            /*cloning all permutive methods*/
-            windowTop["__wmass"].dmp[pMethod] = windowTop.permutive[pMethod];
+            windowTop["__wmass"].dmp[pMethod] = getWmssMethod(pMethod);
           }
         }
       }

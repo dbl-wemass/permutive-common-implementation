@@ -147,6 +147,8 @@ Se debe tener en cuenta los siguientes puntos:
 
 >:warning: Importante: aqui aplican los [Esquemas de validación](#esquemas-de-validación)
 
+>:warning: Este paso es especialmente necesario en Safari debido a las restricciones de ITP respecto al uso de localStorage.
+
 ```javascript
 __wmass.bff.push(function () {
     if (USER_ID_AVAILABLE) {
@@ -160,7 +162,6 @@ __wmass.bff.push(function () {
     //__wmass.dmp.addon('web', {... });
 });
 ```
-Este paso es especialmente necesario en Safari debido a las restricciones de ITP respecto al uso de localStorage.
 
 # Scroll infinito
 En aquellas páginas con scroll infinito se ha de llamar a la función *addon* sin pasar los atributos de usuario (a no ser que estos hayan cambiado).
