@@ -75,7 +75,7 @@ Este paso ha de ejecutarse antes de poder usar ningún otro método y debe de se
         } catch (e) {
             pSegs = []
         }
-        return {segments:pSegs};
+        return {permutive:pSegs};
     };
 </script>
 <script async src="__URLWemassService__"></script>
