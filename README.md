@@ -69,7 +69,7 @@ Este paso ha de ejecutarse antes de poder usar ningún otro método y debe de se
     window.__wmass = window.__wmass || {};
     window.__wmass.bff = window.__wmass.bff || [];
     window.__wmass.getSegments = window.__wmass.getSegments || function(){ 
-        let psegs=[];
+        let pSegs=[];
         try  {
             pSegs = JSON.parse(window.localStorage._papns || '[]').slice(0, 250).map(String);
         } catch (e) {
