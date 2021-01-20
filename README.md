@@ -107,7 +107,7 @@ __wmass.bff.push(function () {
     page: {
         type: "<STRING>",
         content: {
-        categories: ["<LIST>", "<OF>", "<STRINGS>"]
+            categories: ["<LIST>", "<OF>", "<STRINGS>"]
         },
         article: {
             id: "<STRING>",
