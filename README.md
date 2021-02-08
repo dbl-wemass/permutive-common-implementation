@@ -11,6 +11,7 @@
 - [Activando los segmentos](#activando-los-segmentos)
   - [Enviando los segmentos a **Appnexus**](#enviando-los-segmentos-a-appnexus)
   - [Enviando los segmentos a **SmartAdserver**](#enviando-los-segmentos-a-smartadserver)
+  - [Enviando los segmentos a **RichAudience**](#enviando-los-segmentos-a-richaudience)
 - [Otras posibilidades](#otras-posibilidades)
   - [Obteniendo status de segmentos individuales](#obteniendo-status-de-segmentos-individuales)
   - [Listar todos los segmentos con callback](#listar-todos-los-segmentos-con-callback)
@@ -266,6 +267,42 @@ let
                 pageId: "1078608",
                 siteId: "293313",
                 target: wemassDataItems.join(";")
+            }
+        }]
+    }];
+pbjs.addAdUnits(adUnits);
+```
+## Enviando los segmentos a **RichAudience**
+> :warning: **Este código es un ejemplo**: adaptar para cada necesidad
+
+En Richaudience los segmentos se han de pasar dentro del parámetro *keywords*, pero han de ser transformados ya que el parámetro solo admite un string con el formato **"keyword1=segment1;keyword1=segment2;keyword2=segment3;keyword2=segment4"**
+
+Si ya existiera un *keyword* establecido, se debe añadir otra vez un par de *keyword=segment* ;
+
+Aquí un ejemplo de transformación:
+
+```javascript
+let 
+    wemassDataSegments=__wmass.getSegments(),
+    wemassDataItems=Object.keys(wemassDataSegments).map((keyword)=>{
+        return wemassDataSegments[keyword].map((keyvalue)=>{
+            return `${keyword}=${keyvalue}`
+        })
+    }),
+    adUnits = [{
+        code: 'your prebid AdUnit code here',
+        mediaTypes: {
+            banner: {
+                sizes: [ [300, 250], [300, 600] ]
+            }
+        },
+        bids: [{
+            bidder: 'richaudience',
+            params: {
+                pid:"ADb1f40rmo",
+                supplyType:"site",
+                bidfloor:0.40,
+                keywords: wemassDataItems.join(";")
             }
         }]
     }];
