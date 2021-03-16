@@ -285,9 +285,11 @@ Aquí un ejemplo de transformación:
 let 
     wemassDataSegments=__wmass.getSegments(),
     wemassDataItems=Object.keys(wemassDataSegments).map((keyword)=>{
-        return wemassDataSegments[keyword].map((keyvalue)=>{
-            return `${keyword}=${keyvalue}`
-        })
+        let raSegments = [];
+        wemassDataSegments[keyword].map((keyvalue)=>{
+            raSegments.push(`${keyword}=${keyvalue}`)
+        });
+        return raSegments.join(";");
     }),
     adUnits = [{
         code: 'your prebid AdUnit code here',
