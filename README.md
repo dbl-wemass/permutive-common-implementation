@@ -1,17 +1,26 @@
 # Indice <!-- omit in toc -->
 - [Implementación común de permutive](#implementación-común-de-permutive)
   - [Consentimiento](#consentimiento)
+  - [Multiples Integraciones](#multiples-integraciones)
   - [Métodos](#métodos)
   - [Esquemas de validación](#esquemas-de-validación)
 - [Inicialización](#inicialización)
+  - [Codigo **Single**](#codigo-single)
+  - [Codigo **Multi**](#codigo-multi)
 - [Enviando atributos de la página al DMP](#enviando-atributos-de-la-página-al-dmp)
 - [Enviando identidades al DMP](#enviando-identidades-al-dmp)
 - [Scroll infinito](#scroll-infinito)
 - [Obteniendo la lista de segmentos](#obteniendo-la-lista-de-segmentos)
 - [Activando los segmentos](#activando-los-segmentos)
   - [Enviando los segmentos a **Appnexus**](#enviando-los-segmentos-a-appnexus)
+    - [Codigo **Single**](#codigo-single-1)
+    - [Codigo **Multi**](#codigo-multi-1)
   - [Enviando los segmentos a **SmartAdserver**](#enviando-los-segmentos-a-smartadserver)
+    - [Codigo **Single**](#codigo-single-2)
+    - [Codigo **Multi**](#codigo-multi-2)
   - [Enviando los segmentos a **RichAudience**](#enviando-los-segmentos-a-richaudience)
+    - [Codigo **Single**](#codigo-single-3)
+    - [Codigo **Multi**](#codigo-multi-3)
 - [Otras posibilidades](#otras-posibilidades)
   - [Obteniendo status de segmentos individuales](#obteniendo-status-de-segmentos-individuales)
   - [Listar todos los segmentos con callback](#listar-todos-los-segmentos-con-callback)
@@ -48,6 +57,10 @@ TCF v1
 
 El contenido del archivo sin personalizar de *\_\_URLWemassService__* se encuentra en */src/index.js*.
 
+## Multiples Integraciones
+En la mayor parte de las implementaciones, se ha de utilizar la implementacion single.
+**En el caso de que en la pagina haya multiples instancias de permutive, habra que usar los ejemplos de codigo indicados como multi.**
+
 ## Métodos 
 Todos los métodos wemass están pensados para ejecutarse tras un buffer (*__wmass.bff*), el cual es inicializado manualmente, por lo que la posibilidad de errores será minimizada.
 
@@ -64,7 +77,7 @@ Para añadir o modificar estos valores, por favor contacta con wemass.
 # Inicialización
 
 Este paso ha de ejecutarse antes de poder usar ningún otro método y debe de ser ejecutado en el objeto *window* superior de la página. Cuanto más arriba en el propio código fuente de la página, mejor.
-
+## Codigo **Single**
 ```html
 <script>
     window.__wmass = window.__wmass || {};
@@ -73,6 +86,25 @@ Este paso ha de ejecutarse antes de poder usar ningún otro método y debe de se
         let pSegs=[];
         try  {
             pSegs = JSON.parse(window.localStorage._papns || '[]').slice(0, 250).map(String);
+        } catch (e) {
+            pSegs = []
+        }
+        return {permutive:pSegs};
+    };
+</script>
+<script async src="__URLWemassService__"></script>
+```
+
+## Codigo **Multi**
+Los segmentos no se extraen de la propiedad _pnaps como siempre sino de una entrada tras el namespace de wemass
+```html
+<script>
+    window.__wmass = window.__wmass || {};
+    window.__wmass.bff = window.__wmass.bff || [];
+    window.__wmass.getSegments = window.__wmass.getSegments || function(){ 
+        let pSegs=[];
+        try  {
+            pSegs = JSON.parse(window.localStorage["{NAMESPACE}/_papns"] || '[]').slice(0, 250).map(String);
         } catch (e) {
             pSegs = []
         }
@@ -216,7 +248,7 @@ Se han de pasar los datos de los segmentos de permutive a los SSP de wemass que 
 En Appnexus los segmentos se han de pasar dentro del parámetro *keywords* como se puede ver en el ejemplo.
 
 El parámetro admite un objeto cuyas propiedades tienen un array de strings. La función *__wmass.getSegments()* devolverá los valores listos para usar.
-
+### Codigo **Single**
 ```javascript
 let 
     wemassDataSegments=__wmass.getSegments(),
@@ -237,6 +269,30 @@ let
     }];
 pbjs.addAdUnits(adUnits);
 ```
+### Codigo **Multi**
+En el caso de que se quiera enviar los segmentos de permutive a wemass para dar servicio a campañas que administremos, se ha de incluir en la propiedad de keywords una nueva propiedad con los segmentos del publisher. De lo contrario usar el ejemplo single.
+```javascript
+let wemassDataSegments=__wmass.getSegments();
+wemassDataSegments["permutive<PUBLISHER>"]=["pubSegment1","pubSegment2","pubSegment..."];
+let adUnits = [{
+        code: 'your prebid AdUnit code here',
+        mediaTypes: {
+            banner: {
+                sizes: [ [300, 250], [300, 600] ]
+            }
+        },
+        bids: [{
+            bidder: 'appnexus',
+            params: {
+                placementId: 13144370,
+                keywords: wemassDataSegments
+            }
+        }]
+    }];
+pbjs.addAdUnits(adUnits);
+```
+
+
 ## Enviando los segmentos a **SmartAdserver**
 > :warning: **Este código es un ejemplo**: adaptar para cada necesidad
 
@@ -245,7 +301,7 @@ En SmartAdserver los segmentos se han de pasar dentro del parámetro *target*, p
 Si ya existiera un *target* establecido, se debería concatenar al mismo separando por un ;
 
 Aquí un ejemplo de transformación:
-
+### Codigo **Single**
 ```javascript
 let 
     wemassDataSegments=__wmass.getSegments(),
@@ -272,6 +328,37 @@ let
     }];
 pbjs.addAdUnits(adUnits);
 ```
+### Codigo **Multi**
+En el caso de que se quiera enviar los segmentos de permutive a wemass para dar servicio a campañas que administremos, se ha de incluir en la propiedad de keywords una nueva propiedad con los segmentos del publisher. De lo contrario usar el ejemplo single.
+```javascript
+let 
+    wemassDataSegments=__wmass.getSegments();
+wemassDataSegments["permutive<PUBLISHER>"]=["pubSegment1","pubSegment2","pubSegment..."];
+let
+    wemassDataItems=Object.keys(wemassDataSegments).map((target)=>{
+        return `${target}=${wemassDataSegments[target].join()}`
+    }),
+    adUnits = [{
+        code: 'your prebid AdUnit code here',
+        mediaTypes: {
+            banner: {
+                sizes: [ [300, 250], [300, 600] ]
+            }
+        },
+        bids: [{
+            bidder: 'smartadserver',
+            params: {
+                domain: "//prg.smartadserver.com",
+                formatId: "78109",
+                pageId: "1078608",
+                siteId: "293313",
+                target: wemassDataItems.join(";")
+            }
+        }]
+    }];
+pbjs.addAdUnits(adUnits);
+```
+
 ## Enviando los segmentos a **RichAudience**
 > :warning: **Este código es un ejemplo**: adaptar para cada necesidad
 
@@ -280,10 +367,41 @@ En Richaudience los segmentos se han de pasar dentro del parámetro *keywords*, 
 Si ya existiera un *keyword* establecido, se debe añadir otra vez un par de *keyword=segment* ;
 
 Aquí un ejemplo de transformación:
-
+### Codigo **Single**
 ```javascript
 let 
     wemassDataSegments=__wmass.getSegments(),
+    wemassDataItems=Object.keys(wemassDataSegments).map((keyword)=>{
+        return wemassDataSegments[keyword].map((keyvalue)=>{
+            return `${keyword}=${keyvalue}`
+        })
+    }),
+    adUnits = [{
+        code: 'your prebid AdUnit code here',
+        mediaTypes: {
+            banner: {
+                sizes: [ [300, 250], [300, 600] ]
+            }
+        },
+        bids: [{
+            bidder: 'richaudience',
+            params: {
+                pid:"ADb1f40rmo",
+                supplyType:"site",
+                bidfloor:0.40,
+                keywords: wemassDataItems.join(";")
+            }
+        }]
+    }];
+pbjs.addAdUnits(adUnits);
+```
+### Codigo **Multi**
+En el caso de que se quiera enviar los segmentos de permutive a wemass para dar servicio a campañas que administremos, se ha de incluir en la propiedad de keywords una nueva propiedad con los segmentos del publisher. De lo contrario usar el ejemplo single.
+```javascript
+let 
+    wemassDataSegments=__wmass.getSegments();
+wemassDataSegments["permutive<PUBLISHER>"]=["pubSegment1","pubSegment2","pubSegment..."];
+let
     wemassDataItems=Object.keys(wemassDataSegments).map((keyword)=>{
         return wemassDataSegments[keyword].map((keyvalue)=>{
             return `${keyword}=${keyvalue}`
@@ -353,6 +471,8 @@ __wmass.bff.push(function () {
 >:warning: Importante: aqui aplican los [Esquemas de validación](#esquemas-de-validación)
 
 # Changelog
+01/12/2021 : Incluidos ejemplos multi.
+
 29/10/2020 : Incluido índice. Añadidas otras opciones.
 
 28/10/2020 : Añadido setup para scroll infinito. Incluido ejemplo de SmartAdserver. Modificaciones por claridad.
