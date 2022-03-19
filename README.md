@@ -11,15 +11,18 @@
 - [Enviando identidades al DMP](#enviando-identidades-al-dmp)
 - [Scroll infinito](#scroll-infinito)
 - [Obteniendo la lista de segmentos](#obteniendo-la-lista-de-segmentos)
+  - [Función getSegments](#función-getsegments)
 - [Activando los segmentos](#activando-los-segmentos)
   - [Enviando los segmentos a **Appnexus**](#enviando-los-segmentos-a-appnexus)
     - [Codigo **Single**](#codigo-single-1)
     - [Codigo **Multi**](#codigo-multi-1)
-  - [Enviando los segmentos a **SmartAdserver**](#enviando-los-segmentos-a-smartadserver)
+  - [Enviando los segmentos a **Google Admanager video**](#enviando-los-segmentos-a-google-admanager-video)
     - [Codigo **Single**](#codigo-single-2)
+  - [Enviando los segmentos a **SmartAdserver**](#enviando-los-segmentos-a-smartadserver)
+    - [Codigo **Single**](#codigo-single-3)
     - [Codigo **Multi**](#codigo-multi-2)
   - [Enviando los segmentos a **RichAudience**](#enviando-los-segmentos-a-richaudience)
-    - [Codigo **Single**](#codigo-single-3)
+    - [Codigo **Single**](#codigo-single-4)
     - [Codigo **Multi**](#codigo-multi-3)
 - [Otras posibilidades](#otras-posibilidades)
   - [Obteniendo status de segmentos individuales](#obteniendo-status-de-segmentos-individuales)
@@ -54,8 +57,6 @@ TCF v1
     "3": Ad selection, delivery, reporting
     "5": Measurement
 ```
-
-El contenido del archivo sin personalizar de *\_\_URLWemassService__* se encuentra en */src/index.js*.
 
 ## Multiples Integraciones
 En la mayor parte de las implementaciones, se ha de utilizar la implementacion single.
@@ -104,7 +105,7 @@ Los segmentos no se extraen de la propiedad _pnaps como siempre sino de una entr
     window.__wmass.getSegments = window.__wmass.getSegments || function(){ 
         let pSegs=[];
         try  {
-            pSegs = JSON.parse(window.localStorage["{NAMESPACE}/_papns"] || '[]').slice(0, 250).map(String);
+            pSegs = JSON.parse(window.localStorage["{NAMESPACE}_papns"] || '[]').slice(0, 250).map(String);
         } catch (e) {
             pSegs = []
         }
@@ -114,6 +115,9 @@ Los segmentos no se extraen de la propiedad _pnaps como siempre sino de una entr
 <script async src="__URLWemassService__"></script>
 ```
 >:warning: Wemass hará llegar el código correcto. No usar este código en producción.
+
+>:warning: No se debe cachear el resultado de la funcion __wmass.getSegments el contenido que devuelve puede variar en funcion de el momento de ejecucion y la propia funcion es sobreescrita una vez que el sdk termina de cargar. Ver [Función getSegments](#función-getsegments)
+
 
 # Enviando atributos de la página al DMP
 Estos son los atributos que se han de pasar al DMP, en caso de que alguno de ellos no se pueda rellenar se ha de pasar un string vacío.
@@ -227,15 +231,25 @@ __wmass.bff.push(function () {
 });
 ```
 # Obteniendo la lista de segmentos
-```javascript 
-let segmentList= __wmass.getSegments();
+## Función getSegments
+```typescript
+let segmentList= __wmass.getSegments(opciones:undefined|Opciones{});
 ```
-*getSements* devolverá un objeto con 1 o varios atributos con diferentes grupos de segmentos. Cada propiedad contendrá un array de strings con la información.
+*getSements* por defectoi devolverá un objeto con 1 o varios atributos con diferentes grupos de segmentos. Cada propiedad contendrá un array de strings con la información.
 
-Por ahora solamente devolverá
+Por ejemplo
 ```javascript
 {segments:["lista","de","segmentos"]}
 ```
+La funcion permite como argumento un objeto de opciones. Las propiedades permitidas son:
+- **callback**: Funcion a la que enviar los segmentos una vez obtenidos
+- **timeout**: aplica solo a callback, indica cuanto se esperara maximo para enviar los segmentos. (defecto 500 ms)
+- **interfal**: indica cada cuanto tiempo se comprobará si los segmentos están ya disponibles (defecto 100ms)
+- **adunit**: String. Aqui se indicará el adunit de la pagina en caso de que se quiera pasar
+- **extraKw**: {["*"]:object|string|number}. Objeto cuyas propiedades han de ser un array de strings, un string  o un number
+- **format**: admite los valores "xandr", "smart", "richaudience" y "gamvideo": devuelte los segmentos adaptados al formato especificado. el resultado por defecto es el de xandr
+
+
 Es importante para obtener los segmentos usar la función *__wmass.getSegments()* ya que, aunque se inicializa con una funcionalidad estática en el setUp del DMP. Una vez que se inicializa el mismo, su funcionalidad podría cambiar.
 
 # Activando los segmentos
@@ -272,8 +286,9 @@ pbjs.addAdUnits(adUnits);
 ### Codigo **Multi**
 En el caso de que se quiera enviar los segmentos de permutive a wemass para dar servicio a campañas que administremos, se ha de incluir en la propiedad de keywords una nueva propiedad con los segmentos del publisher. De lo contrario usar el ejemplo single.
 ```javascript
-let wemassDataSegments=__wmass.getSegments();
-wemassDataSegments["permutive<PUBLISHER>"]=["pubSegment1","pubSegment2","pubSegment..."];
+let wemassDataSegments=__wmass.getSegments({extraKw:{
+    "permutive<PUBLISHER>":["pubSegment1","pubSegment2","pubSegment..."]
+}});
 let adUnits = [{
         code: 'your prebid AdUnit code here',
         mediaTypes: {
@@ -291,6 +306,19 @@ let adUnits = [{
     }];
 pbjs.addAdUnits(adUnits);
 ```
+## Enviando los segmentos a **Google Admanager video**
+> :warning: **Este código es un ejemplo**: adaptar para cada necesidad
+
+En google admanager los segmentos se han de pasar dentro del parametro cust_params y codificados para html entities en la url del vast. Como tal han de ser transformados para dicha eventualidad. La funcion getSegments se encarga de ello
+
+### Codigo **Single**
+```javascript
+let 
+    wemassDataSegments=__wmass.getSegments({format:"gamvideo",adunit="/accountid/nivel1/nivel2/nivel3/nivel4/nivel5"}),
+    gamVideoUrl = `https://securepubads.g.doubleclick.net/gampad/ads?cust_params=${wemassDataSegments}` 
+//resultado de wemassDataSegments 'au1%3Dnivel1%26au2%3D%2Fnivel2%26au3%3D%2Fnivel3%26au4%3D%2Fnivel4%26au5%3D%2Fnivel5%26wpm%3D57636%2C61920%2C66785%2C66787%2C66788%2C66811%2C66813%2C66814%2C66816%2C69760%2C71822%2C73933%2C75490%2C75680%2C75959%2C76968%2C76969%2C76979%2C76982%2C77016%2C77018%2C77021%2C77025%2C77057%2C77058%2C77059%2C79454%2C79479%2C79480%2C83146%2C86951%2C87900%2C88023%2C88792%2C89007%2C91596%2C94070%2C94292%2C95302%2C95314%2C95318%2C95319%2C95440%2C95444%2C95445%2C95446%2C95447%2C98982%26wirr%3Doutxgam%2Coutxcon'
+
+```
 
 
 ## Enviando los segmentos a **SmartAdserver**
@@ -304,10 +332,7 @@ Aquí un ejemplo de transformación:
 ### Codigo **Single**
 ```javascript
 let 
-    wemassDataSegments=__wmass.getSegments(),
-    wemassDataItems=Object.keys(wemassDataSegments).map((target)=>{
-        return `${target}=${wemassDataSegments[target].join()}`
-    }),
+    wemassDataSegments=__wmass.getSegments({format:"smart"}),
     adUnits = [{
         code: 'your prebid AdUnit code here',
         mediaTypes: {
@@ -322,7 +347,7 @@ let
                 formatId: "78109",
                 pageId: "1078608",
                 siteId: "293313",
-                target: wemassDataItems.join(";")
+                target: wemassDataSegments
             }
         }]
     }];
@@ -332,12 +357,9 @@ pbjs.addAdUnits(adUnits);
 En el caso de que se quiera enviar los segmentos de permutive a wemass para dar servicio a campañas que administremos, se ha de incluir en la propiedad de keywords una nueva propiedad con los segmentos del publisher. De lo contrario usar el ejemplo single.
 ```javascript
 let 
-    wemassDataSegments=__wmass.getSegments();
-wemassDataSegments["permutive<PUBLISHER>"]=["pubSegment1","pubSegment2","pubSegment..."];
-let
-    wemassDataItems=Object.keys(wemassDataSegments).map((target)=>{
-        return `${target}=${wemassDataSegments[target].join()}`
-    }),
+    wemassDataSegments=__wmass.getSegments({format:"smart",extraKw:{
+        "permutive<PUBLISHER>":["pubSegment1","pubSegment2","pubSegment..."]
+    }}),
     adUnits = [{
         code: 'your prebid AdUnit code here',
         mediaTypes: {
@@ -352,7 +374,7 @@ let
                 formatId: "78109",
                 pageId: "1078608",
                 siteId: "293313",
-                target: wemassDataItems.join(";")
+                target: wemassDataSegments
             }
         }]
     }];
@@ -370,14 +392,7 @@ Aquí un ejemplo de transformación:
 ### Codigo **Single**
 ```javascript
 let 
-    wemassDataSegments=__wmass.getSegments(),
-    wemassDataItems=Object.keys(wemassDataSegments).map((keyword)=>{
-        let raSegments = [];
-        wemassDataSegments[keyword].map((keyvalue)=>{
-            raSegments.push(`${keyword}=${keyvalue}`)
-        });
-        return raSegments.join(";");
-    }),
+    wemassDataSegments=__wmass.getSegments({format:"richaudience"}),
     adUnits = [{
         code: 'your prebid AdUnit code here',
         mediaTypes: {
@@ -391,7 +406,7 @@ let
                 pid:"ADb1f40rmo",
                 supplyType:"site",
                 bidfloor:0.40,
-                keywords: wemassDataItems.join(";")
+                keywords: wemassDataSegments
             }
         }]
     }];
@@ -401,14 +416,9 @@ pbjs.addAdUnits(adUnits);
 En el caso de que se quiera enviar los segmentos de permutive a wemass para dar servicio a campañas que administremos, se ha de incluir en la propiedad de keywords una nueva propiedad con los segmentos del publisher. De lo contrario usar el ejemplo single.
 ```javascript
 let 
-    wemassDataSegments=__wmass.getSegments();
-wemassDataSegments["permutive<PUBLISHER>"]=["pubSegment1","pubSegment2","pubSegment..."];
-let
-    wemassDataItems=Object.keys(wemassDataSegments).map((keyword)=>{
-        return wemassDataSegments[keyword].map((keyvalue)=>{
-            return `${keyword}=${keyvalue}`
-        })
-    }),
+     wemassDataSegments=__wmass.getSegments({format:"richaudience",extraKw:{
+        "permutive<PUBLISHER>":["pubSegment1","pubSegment2","pubSegment..."]
+    }}),
     adUnits = [{
         code: 'your prebid AdUnit code here',
         mediaTypes: {
@@ -473,6 +483,8 @@ __wmass.bff.push(function () {
 >:warning: Importante: aqui aplican los [Esquemas de validación](#esquemas-de-validación)
 
 # Changelog
+18:03/2022 : Incluidas las opciones en getSegments
+
 01/12/2021 : Incluidos ejemplos multi.
 
 29/10/2020 : Incluido índice. Añadidas otras opciones.
