@@ -242,9 +242,6 @@ Por ejemplo
 {segments:["lista","de","segmentos"]}
 ```
 La funcion permite como argumento un objeto de opciones. Las propiedades permitidas son:
-- **callback**: Funcion a la que enviar los segmentos una vez obtenidos
-- **timeout**: aplica solo a callback, indica cuanto se esperara maximo para enviar los segmentos. (defecto 500 ms)
-- **interfal**: indica cada cuanto tiempo se comprobará si los segmentos están ya disponibles (defecto 100ms)
 - **adunit**: String. Aqui se indicará el adunit de la pagina en caso de que se quiera pasar
 - **extraKw**: {["*"]:object|string|number}. Objeto cuyas propiedades han de ser un array de strings, un string  o un number
 - **format**: admite los valores "xandr", "smart", "richaudience" y "gamvideo": devuelte los segmentos adaptados al formato especificado. el resultado por defecto es el de xandr
